@@ -4,15 +4,18 @@ import dev.patika.schoolmanagementsystem.business.abstracts.InstructorService;
 import dev.patika.schoolmanagementsystem.core.exceptions.EntityNotExistsException;
 import dev.patika.schoolmanagementsystem.core.exceptions.InvalidEntityTypeException;
 import dev.patika.schoolmanagementsystem.core.exceptions.UniqueConstraintViolationException;
-import dev.patika.schoolmanagementsystem.dataaccess.abstracts.InstructorRepository;
+import dev.patika.schoolmanagementsystem.core.helpers.Lists;
+import dev.patika.schoolmanagementsystem.dataaccess.InstructorRepository;
 import dev.patika.schoolmanagementsystem.entities.concretes.Instructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 
+@Transactional(readOnly = true)
 @Service
 public class InstructorManager implements InstructorService {
 
@@ -25,12 +28,12 @@ public class InstructorManager implements InstructorService {
 
     @Override
     public List<Instructor> findAll() {
-        return repository.findAll();
+        return Lists.from(repository.findAll());
     }
 
     @Override
     public Instructor findById(Long id) {
-        return repository.findById(id);
+        return repository.findById(id).orElse(null);
     }
 
     @Override
@@ -38,14 +41,16 @@ public class InstructorManager implements InstructorService {
         return repository.findByPhoneNumber(phoneNumber);
     }
 
+    @Transactional
     @Override
     public Instructor create(Instructor instructor) {
         validatePhoneNumberIsUnique(instructor.getPhoneNumber());
         return repository.save(instructor);
     }
 
+    @Transactional
     @Override
-    public Instructor update(Instructor instructor) {
+    public void update(Instructor instructor) {
 
         Instructor existsInstructor = findById(instructor.getId());
 
@@ -59,9 +64,10 @@ public class InstructorManager implements InstructorService {
 
         validatePhoneNumberIsUniqueForUpdate(instructor.getPhoneNumber(), instructor.getId());
 
-        return repository.update(instructor);
+        repository.save(instructor);
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
 

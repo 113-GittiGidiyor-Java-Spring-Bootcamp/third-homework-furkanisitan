@@ -5,16 +5,19 @@ import dev.patika.schoolmanagementsystem.business.abstracts.InstructorService;
 import dev.patika.schoolmanagementsystem.core.exceptions.EntityNotExistsException;
 import dev.patika.schoolmanagementsystem.core.exceptions.ForeignKeyConstraintViolationException;
 import dev.patika.schoolmanagementsystem.core.exceptions.UniqueConstraintViolationException;
-import dev.patika.schoolmanagementsystem.dataaccess.abstracts.CourseRepository;
+import dev.patika.schoolmanagementsystem.core.helpers.Lists;
+import dev.patika.schoolmanagementsystem.dataaccess.CourseRepository;
 import dev.patika.schoolmanagementsystem.entities.concretes.Course;
 import dev.patika.schoolmanagementsystem.entities.concretes.Instructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 
+@Transactional(readOnly = true)
 @Service
 public class CourseManager implements CourseService {
 
@@ -29,12 +32,12 @@ public class CourseManager implements CourseService {
 
     @Override
     public List<Course> findAll() {
-        return repository.findAll();
+        return Lists.from(repository.findAll());
     }
 
     @Override
     public Course findById(Long id) {
-        return repository.findById(id);
+        return repository.findById(id).orElse(null);
     }
 
     @Override
@@ -42,6 +45,7 @@ public class CourseManager implements CourseService {
         return repository.findByCode(code);
     }
 
+    @Transactional
     @Override
     public Course create(Course course) {
 
@@ -54,8 +58,9 @@ public class CourseManager implements CourseService {
         return repository.save(course);
     }
 
+    @Transactional
     @Override
-    public Course update(Course course) {
+    public void update(Course course) {
 
         // Check if the course is exists
         if (findById(course.getId()) == null)
@@ -67,9 +72,10 @@ public class CourseManager implements CourseService {
         // Check if there is an instructor with the foreign key 'instructorId'
         validateInstructorIsExists(course.getInstructor().getId());
 
-        return repository.update(course);
+        repository.save(course);
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
 

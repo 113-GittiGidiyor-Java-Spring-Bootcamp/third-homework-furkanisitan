@@ -14,7 +14,7 @@ public interface InstructorService {
 
     Instructor create(Instructor instructor);
 
-    Instructor update(Instructor instructor);
+    void update(Instructor instructor);
 
     void deleteById(Long id);
 }
