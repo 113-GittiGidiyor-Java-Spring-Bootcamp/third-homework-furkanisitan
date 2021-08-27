@@ -3,12 +3,19 @@ package dev.patika.schoolmanagementsystem.entities.concretes;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.DEDUCTION, defaultImpl = Instructor.class)
 @JsonSubTypes({@JsonSubTypes.Type(PermanentInstructor.class), @JsonSubTypes.Type(VisitingResearcher.class)})
 @Entity
@@ -30,47 +37,10 @@ public class Instructor {
     @Column(name = "address", nullable = false, length = 100)
     private String address;
 
+    @Setter(AccessLevel.NONE)
     @JsonIgnoreProperties({"instructor", "students"})
     @OneToMany(mappedBy = "instructor", fetch = FetchType.LAZY)
     private Set<Course> courses = new HashSet<>();
-
-    //region getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Set<Course> getCourses() {
-        return courses;
-    }
-    //endregion
 
     //region equals & hashCode
     @Override

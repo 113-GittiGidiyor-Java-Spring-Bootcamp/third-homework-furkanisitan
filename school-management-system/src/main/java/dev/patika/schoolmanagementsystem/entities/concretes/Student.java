@@ -2,12 +2,19 @@ package dev.patika.schoolmanagementsystem.entities.concretes;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.patika.schoolmanagementsystem.entities.enums.Gender;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "students")
 public class Student {
@@ -30,57 +37,12 @@ public class Student {
     @Column(name = "gender", columnDefinition = "TINYINT")
     private Gender gender;
 
+    @Setter(AccessLevel.NONE)
     @JsonIgnoreProperties({"students", "instructor"})
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "student_course", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
     private Set<Course> courses = new HashSet<>();
-
-    //region getters and setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public Set<Course> getCourses() {
-        return courses;
-    }
-    //endregion
-
+    
     //region equals & hashCode
     @Override
     public boolean equals(Object o) {
