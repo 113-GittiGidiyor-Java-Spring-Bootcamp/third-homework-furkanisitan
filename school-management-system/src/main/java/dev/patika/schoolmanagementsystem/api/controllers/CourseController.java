@@ -1,6 +1,5 @@
 package dev.patika.schoolmanagementsystem.api.controllers;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.patika.schoolmanagementsystem.api.helpers.DataResultResponseHelper;
 import dev.patika.schoolmanagementsystem.business.abstracts.CourseService;
 import dev.patika.schoolmanagementsystem.core.results.abstracts.DataResult;
@@ -70,9 +69,16 @@ public class CourseController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Result> delete(@PathVariable long id) {
+    public ResponseEntity<Result> deleteById(@PathVariable long id) {
 
         courseService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Result> deleteByName(@RequestParam String name) {
+
+        courseService.deleteByName(name);
         return ResponseEntity.noContent().build();
     }
 }

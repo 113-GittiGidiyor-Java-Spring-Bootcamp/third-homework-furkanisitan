@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface InstructorRepository extends CrudRepository<Instructor, Long> {
 
+    List<Instructor> findAllByName(String name);
+
     List<Instructor> findAllByNameContains(String name);
 
     Instructor findByPhoneNumber(String phoneNumber);

@@ -92,6 +92,18 @@ public class CourseManager implements CourseService {
         repository.delete(course);
     }
 
+    @Transactional
+    @Override
+    public void deleteByName(String name) {
+
+        List<Course> courses = repository.findAllByName(name);
+
+        for (Course course : courses) {
+            course.clearStudents();
+            repository.delete(course);
+        }
+    }
+
     //region validators
 
     /**

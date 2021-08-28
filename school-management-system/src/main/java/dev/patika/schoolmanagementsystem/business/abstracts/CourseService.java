@@ -25,4 +25,11 @@ public interface CourseService {
     void update(Course course);
 
     void deleteById(Long id);
+
+    /**
+     * Deletes all matching courses by {@literal name}.
+     *
+     * @param name course name to delete.
+     */
+    void deleteByName(String name);
 }

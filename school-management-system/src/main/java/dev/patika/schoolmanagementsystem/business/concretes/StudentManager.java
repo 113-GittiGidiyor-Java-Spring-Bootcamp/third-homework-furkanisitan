@@ -53,4 +53,10 @@ public class StudentManager implements StudentService {
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
+
+    @Transactional
+    @Override
+    public void deleteByName(String name) {
+        repository.deleteAllByName(name);
+    }
 }

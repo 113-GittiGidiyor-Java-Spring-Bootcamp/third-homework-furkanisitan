@@ -23,4 +23,11 @@ public interface StudentService {
     void update(Student student);
 
     void deleteById(Long id);
+
+    /**
+     * Deletes all matching students by {@literal name}.
+     *
+     * @param name student name to delete.
+     */
+    void deleteByName(String name);
 }

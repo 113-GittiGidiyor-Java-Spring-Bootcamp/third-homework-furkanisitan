@@ -25,4 +25,11 @@ public interface InstructorService {
     void update(Instructor instructor);
 
     void deleteById(Long id);
+
+    /**
+     * Deletes all matching instructors by {@literal name}.
+     *
+     * @param name instructor name to delete.
+     */
+    void deleteByName(String name);
 }

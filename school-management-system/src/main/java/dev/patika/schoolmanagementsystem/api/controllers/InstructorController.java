@@ -65,7 +65,7 @@ public class InstructorController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Result> delete(@PathVariable long id) {
+    public ResponseEntity<Result> deleteById(@PathVariable long id) {
 
         Instructor existsInstructor = instructorService.findById(id);
 
@@ -75,6 +75,13 @@ public class InstructorController {
 
         instructorService.deleteById(id);
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Result> deleteByName(@RequestParam String name) {
+
+        instructorService.deleteByName(name);
         return ResponseEntity.noContent().build();
     }
 

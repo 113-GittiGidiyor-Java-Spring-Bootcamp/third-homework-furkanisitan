@@ -85,6 +85,18 @@ public class InstructorManager implements InstructorService {
         repository.delete(instructor);
     }
 
+    @Transactional
+    @Override
+    public void deleteByName(String name) {
+
+        List<Instructor> instructors = repository.findAllByName(name);
+
+        for (Instructor instructor : instructors) {
+            instructor.clearCourses();
+            repository.delete(instructor);
+        }
+    }
+
     //region validators
 
     /**
