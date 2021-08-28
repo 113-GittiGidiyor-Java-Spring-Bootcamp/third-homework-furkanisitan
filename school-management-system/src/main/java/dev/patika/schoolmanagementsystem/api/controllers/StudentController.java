@@ -30,8 +30,8 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<DataResult<List<Student>>> getAll() {
-        return ResponseEntity.ok(DataResultHelper.ok(studentService.findAll()));
+    public ResponseEntity<DataResult<List<Student>>> getAll(@RequestParam(required = false) String name) {
+        return ResponseEntity.ok(DataResultHelper.ok(studentService.findAll(name)));
     }
 
     @GetMapping("/{id}")

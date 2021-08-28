@@ -8,6 +8,14 @@ public interface InstructorService {
 
     List<Instructor> findAll();
 
+    /**
+     * Filters those containing the name. If {@literal name} is empty, returns all instructors.
+     *
+     * @param name instructor name to filter.
+     * @return filtered list of instructors.
+     */
+    List<Instructor> findAll(String name);
+
     Instructor findById(Long id);
 
     Instructor findByPhoneNumber(String phoneNumber);

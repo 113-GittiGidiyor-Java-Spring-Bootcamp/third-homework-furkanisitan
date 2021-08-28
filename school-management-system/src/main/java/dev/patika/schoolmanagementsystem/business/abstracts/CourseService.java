@@ -8,6 +8,14 @@ public interface CourseService {
 
     List<Course> findAll();
 
+    /**
+     * Filters those containing the name. If {@literal name} is empty, returns all courses.
+     *
+     * @param name course name to filter.
+     * @return filtered list of courses.
+     */
+    List<Course> findAll(String name);
+
     Course findById(Long id);
 
     Course findByCode(String code);

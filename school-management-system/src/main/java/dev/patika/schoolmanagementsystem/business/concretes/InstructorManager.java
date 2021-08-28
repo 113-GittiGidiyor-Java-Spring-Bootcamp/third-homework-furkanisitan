@@ -32,6 +32,11 @@ public class InstructorManager implements InstructorService {
     }
 
     @Override
+    public List<Instructor> findAll(String name) {
+        return name != null && !name.isEmpty() ? Lists.from(repository.findAllByNameContains(name)) : findAll();
+    }
+
+    @Override
     public Instructor findById(Long id) {
         return repository.findById(id).orElse(null);
     }

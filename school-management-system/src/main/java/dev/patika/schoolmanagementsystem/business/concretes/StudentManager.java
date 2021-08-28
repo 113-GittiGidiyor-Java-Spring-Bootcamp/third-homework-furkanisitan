@@ -27,6 +27,11 @@ public class StudentManager implements StudentService {
     }
 
     @Override
+    public List<Student> findAll(String name) {
+        return name != null && !name.isEmpty() ? Lists.from(repository.findAllByNameContains(name)) : findAll();
+    }
+
+    @Override
     public Student findById(Long id) {
         return repository.findById(id).orElse(null);
     }

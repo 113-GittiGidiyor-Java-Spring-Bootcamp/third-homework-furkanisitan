@@ -30,8 +30,8 @@ public class InstructorController {
     }
 
     @GetMapping
-    public ResponseEntity<DataResult<List<Instructor>>> getAll() {
-        return ResponseEntity.ok(DataResultHelper.ok(instructorService.findAll()));
+    public ResponseEntity<DataResult<List<Instructor>>> getAll(@RequestParam(required = false) String name) {
+        return ResponseEntity.ok(DataResultHelper.ok(instructorService.findAll(name)));
     }
 
     @GetMapping("/{id}")
