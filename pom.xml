@@ -15,6 +15,7 @@
 
     <modules>
         <module>school-management-system</module>
+        <module>currency-converter</module>
     </modules>
 
 </project>
