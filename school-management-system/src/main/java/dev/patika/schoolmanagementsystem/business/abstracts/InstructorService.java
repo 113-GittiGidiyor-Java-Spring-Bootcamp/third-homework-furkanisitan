@@ -1,5 +1,6 @@
 package dev.patika.schoolmanagementsystem.business.abstracts;
 
+import dev.patika.schoolmanagementsystem.business.filtercriterias.InstructorCriteria;
 import dev.patika.schoolmanagementsystem.entities.concretes.Instructor;
 
 import java.util.List;
@@ -7,15 +8,7 @@ import java.util.Optional;
 
 public interface InstructorService {
 
-    List<Instructor> findAll();
-
-    /**
-     * Filters those containing the name. If {@literal name} is empty, returns all instructors.
-     *
-     * @param name instructor name to filter.
-     * @return filtered list of instructors.
-     */
-    List<Instructor> findAll(String name);
+    List<? extends Instructor> findAll(InstructorCriteria criteria);
 
     Optional<Instructor> findById(Long id);
 

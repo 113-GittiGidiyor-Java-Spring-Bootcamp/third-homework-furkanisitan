@@ -32,7 +32,7 @@ public class CourseController {
 
     @GetMapping
     public ResponseEntity<DataResult<List<Course>>> getAll(@RequestParam(required = false) String name) {
-        return ResponseEntity.ok(DataResultHelper.ok(courseService.findAll(name)));
+        return ResponseEntity.ok(DataResultHelper.ok(courseService.findAllByNameContains(name)));
     }
 
     @GetMapping("/{id}")

@@ -9,13 +9,7 @@ public interface StudentService {
 
     List<Student> findAll();
 
-    /**
-     * Filters those containing the name. If {@literal name} is empty, returns all students.
-     *
-     * @param name student name to filter.
-     * @return filtered list of students.
-     */
-    List<Student> findAll(String name);
+    List<Student> findAllByNameContains(String name);
 
     Optional<Student> findById(Long id);
 

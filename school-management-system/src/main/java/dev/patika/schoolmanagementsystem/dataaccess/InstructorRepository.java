@@ -5,18 +5,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface InstructorRepository extends JpaRepository<Instructor, Long> {
 
     List<Instructor> findAllByName(String name);
 
-    List<Instructor> findAllByNameContains(String name);
-
-    Optional<Instructor> findByPhoneNumber(String phoneNumber);
+    List<Instructor> findAllByNameContainsIgnoreCase(String name);
 
     Instructor getByPhoneNumber(String phoneNumber);
 
     boolean existsByPhoneNumber(String phoneNumber);
 }
+

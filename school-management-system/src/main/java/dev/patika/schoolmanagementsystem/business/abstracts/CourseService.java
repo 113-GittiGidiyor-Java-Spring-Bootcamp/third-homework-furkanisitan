@@ -15,7 +15,7 @@ public interface CourseService {
      * @param name course name to filter.
      * @return filtered list of courses.
      */
-    List<Course> findAll(String name);
+    List<Course> findAllByNameContains(String name);
 
     Optional<Course> findById(Long id);
 

@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
-    List<Student> findAllByNameContains(String name);
+    List<Student> findAllByNameContainsIgnoreCase(String name);
 
     void deleteAllByName(String name);
 }

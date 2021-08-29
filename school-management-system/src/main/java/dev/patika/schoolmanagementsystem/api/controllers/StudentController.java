@@ -31,7 +31,7 @@ public class StudentController {
 
     @GetMapping
     public ResponseEntity<DataResult<List<Student>>> getAll(@RequestParam(required = false) String name) {
-        return ResponseEntity.ok(DataResultHelper.ok(studentService.findAll(name)));
+        return ResponseEntity.ok(DataResultHelper.ok(studentService.findAllByNameContains(name)));
     }
 
     @GetMapping("/{id}")

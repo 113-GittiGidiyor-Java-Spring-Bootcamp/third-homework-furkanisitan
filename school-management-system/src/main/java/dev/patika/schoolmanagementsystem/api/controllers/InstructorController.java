@@ -2,6 +2,7 @@ package dev.patika.schoolmanagementsystem.api.controllers;
 
 import dev.patika.schoolmanagementsystem.api.helpers.DataResultResponseHelper;
 import dev.patika.schoolmanagementsystem.business.abstracts.InstructorService;
+import dev.patika.schoolmanagementsystem.business.filtercriterias.InstructorCriteria;
 import dev.patika.schoolmanagementsystem.core.results.abstracts.DataResult;
 import dev.patika.schoolmanagementsystem.core.results.abstracts.Result;
 import dev.patika.schoolmanagementsystem.core.results.helpers.DataResultHelper;
@@ -30,8 +31,9 @@ public class InstructorController {
     }
 
     @GetMapping
-    public ResponseEntity<DataResult<List<Instructor>>> getAll(@RequestParam(required = false) String name) {
-        return ResponseEntity.ok(DataResultHelper.ok(instructorService.findAll(name)));
+    public ResponseEntity<DataResult<List<? extends Instructor>>> getAll(InstructorCriteria criteria) {
+
+        return ResponseEntity.ok(DataResultHelper.ok(instructorService.findAll(criteria)));
     }
 
     @GetMapping("/{id}")

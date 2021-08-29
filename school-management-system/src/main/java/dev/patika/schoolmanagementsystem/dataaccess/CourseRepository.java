@@ -13,9 +13,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     List<Course> findAllByName(String name);
 
-    List<Course> findAllByNameContains(String name);
-
-    Optional<Course> findByCode(String code);
+    List<Course> findAllByNameContainsIgnoreCase(String name);
 
     Course getByCode(String code);
 

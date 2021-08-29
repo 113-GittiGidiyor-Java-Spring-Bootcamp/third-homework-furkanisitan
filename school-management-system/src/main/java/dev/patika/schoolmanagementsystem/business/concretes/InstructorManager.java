@@ -1,15 +1,22 @@
 package dev.patika.schoolmanagementsystem.business.concretes;
 
 import dev.patika.schoolmanagementsystem.business.abstracts.InstructorService;
+import dev.patika.schoolmanagementsystem.business.filtercriterias.InstructorCriteria;
 import dev.patika.schoolmanagementsystem.core.exceptions.EntityNotExistsException;
 import dev.patika.schoolmanagementsystem.core.exceptions.InvalidEntityTypeException;
 import dev.patika.schoolmanagementsystem.core.exceptions.UniqueConstraintViolationException;
 import dev.patika.schoolmanagementsystem.dataaccess.InstructorRepository;
+import dev.patika.schoolmanagementsystem.dataaccess.PermanentInstructorRepository;
+import dev.patika.schoolmanagementsystem.dataaccess.VisitingResearcherRepository;
 import dev.patika.schoolmanagementsystem.entities.concretes.Instructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,20 +27,33 @@ import java.util.Optional;
 public class InstructorManager implements InstructorService {
 
     private final InstructorRepository repository;
+    private final PermanentInstructorRepository piRepository;
+    private final VisitingResearcherRepository vrRepository;
 
     @Autowired
-    public InstructorManager(InstructorRepository repository) {
+    public InstructorManager(InstructorRepository repository, PermanentInstructorRepository piRepository, VisitingResearcherRepository vrRepository) {
         this.repository = repository;
+        this.piRepository = piRepository;
+        this.vrRepository = vrRepository;
     }
 
     @Override
-    public List<Instructor> findAll() {
-        return repository.findAll();
-    }
+    public List<? extends Instructor> findAll(InstructorCriteria criteria) {
 
-    @Override
-    public List<Instructor> findAll(String name) {
-        return name != null && !name.isEmpty() ? repository.findAllByNameContains(name) : findAll();
+        // If name criteria is exists query only by name
+        if (StringUtils.hasText(criteria.getName()))
+            return repository.findAllByNameContainsIgnoreCase(criteria.getName());
+
+        // Filter by valid limit or sort criteria
+        PageRequest pageRequest = criteria.generatePageRequest();
+        Sort sort = criteria.generateSort();
+
+        if (sort != null) {
+            JpaRepository<? extends Instructor, Long> repo = getRepositoryForSort(criteria.getSort());
+            return pageRequest == null ? repo.findAll(sort) : repo.findAll(pageRequest.withSort(sort)).getContent();
+        }
+
+        return pageRequest == null ? repository.findAll() : repository.findAll(pageRequest).getContent();
     }
 
     @Override
@@ -98,6 +118,12 @@ public class InstructorManager implements InstructorService {
     @Override
     public boolean existsById(Long id) {
         return repository.existsById(id);
+    }
+
+    private JpaRepository<? extends Instructor, Long> getRepositoryForSort(String sort) {
+        if (sort.contains("fixedSalary")) return piRepository;
+        if (sort.contains("hourlySalary")) return vrRepository;
+        return repository;
     }
 
     //region validators

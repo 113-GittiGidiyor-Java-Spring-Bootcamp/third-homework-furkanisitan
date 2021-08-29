@@ -35,8 +35,8 @@ public class CourseManager implements CourseService {
     }
 
     @Override
-    public List<Course> findAll(String name) {
-        return name != null && !name.isEmpty() ? repository.findAllByNameContains(name) : findAll();
+    public List<Course> findAllByNameContains(String name) {
+        return name != null && !name.isEmpty() ? repository.findAllByNameContainsIgnoreCase(name) : findAll();
     }
 
     @Override
