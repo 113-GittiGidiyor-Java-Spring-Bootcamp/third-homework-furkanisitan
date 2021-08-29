@@ -5,10 +5,8 @@ import dev.patika.schoolmanagementsystem.business.abstracts.InstructorService;
 import dev.patika.schoolmanagementsystem.core.exceptions.EntityNotExistsException;
 import dev.patika.schoolmanagementsystem.core.exceptions.ForeignKeyConstraintViolationException;
 import dev.patika.schoolmanagementsystem.core.exceptions.UniqueConstraintViolationException;
-import dev.patika.schoolmanagementsystem.core.helpers.Lists;
 import dev.patika.schoolmanagementsystem.dataaccess.CourseRepository;
 import dev.patika.schoolmanagementsystem.entities.concretes.Course;
-import dev.patika.schoolmanagementsystem.entities.concretes.Instructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -16,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 @Service
@@ -32,29 +31,24 @@ public class CourseManager implements CourseService {
 
     @Override
     public List<Course> findAll() {
-        return Lists.from(repository.findAll());
+        return repository.findAll();
     }
 
     @Override
     public List<Course> findAll(String name) {
-        return name != null && !name.isEmpty() ? Lists.from(repository.findAllByNameContains(name)) : findAll();
+        return name != null && !name.isEmpty() ? repository.findAllByNameContains(name) : findAll();
     }
 
     @Override
-    public Course findById(Long id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    @Override
-    public Course findByCode(String code) {
-        return repository.findByCode(code);
+    public Optional<Course> findById(Long id) {
+        return repository.findById(id);
     }
 
     @Transactional
     @Override
     public Course create(Course course) {
 
-        // check if 'code' is unique
+        // Check if 'code' is unique
         validateCodeIsUnique(course.getCode());
 
         // Check if there is an instructor with the foreign key 'instructorId'
@@ -68,10 +62,10 @@ public class CourseManager implements CourseService {
     public void update(Course course) {
 
         // Check if the course is exists
-        if (findById(course.getId()) == null)
+        if (!repository.existsById(course.getId()))
             throw new EntityNotExistsException("Course", Pair.of("id", course.getId()));
 
-        // check if 'code' is unique
+        // Check if 'code' is unique
         validateCodeIsUniqueForUpdate(course.getCode(), course.getId());
 
         // Check if there is an instructor with the foreign key 'instructorId'
@@ -84,9 +78,9 @@ public class CourseManager implements CourseService {
     @Override
     public void deleteById(Long id) {
 
-        Course course = findById(id);
-        if (course == null)
-            throw new EntityNotExistsException("Course", Pair.of("id", id));
+        Course course = findById(id)
+                // Check if the Course is exists
+                .orElseThrow(() -> new EntityNotExistsException("Course", Pair.of("id", id)));
 
         course.clearStudents();
         repository.delete(course);
@@ -113,8 +107,7 @@ public class CourseManager implements CourseService {
      * @throws UniqueConstraintViolationException if {@literal code} is not unique.
      */
     private void validateCodeIsUnique(String code) {
-        Course existsCourse = findByCode(code);
-        if (existsCourse != null)
+        if (repository.existsByCode(code))
             throw new UniqueConstraintViolationException("code", code);
     }
 
@@ -126,8 +119,11 @@ public class CourseManager implements CourseService {
      * @throws UniqueConstraintViolationException if {@literal code} is not unique.
      */
     private void validateCodeIsUniqueForUpdate(String code, Long courseId) {
-        Course existsCourse = findByCode(code);
-        if (existsCourse != null && !Objects.equals(existsCourse.getId(), courseId))
+
+        // get proxy object
+        Course course = repository.getByCode(code);
+
+        if (course != null && !Objects.equals(course.getId(), courseId))
             throw new UniqueConstraintViolationException("code", code);
     }
 
@@ -138,8 +134,7 @@ public class CourseManager implements CourseService {
      * @throws ForeignKeyConstraintViolationException if @{literal instructorId} is not exists.
      */
     private void validateInstructorIsExists(Long instructorId) {
-        Instructor existsInstructor = instructorService.findById(instructorId);
-        if (existsInstructor == null)
+        if (!instructorService.existsById(instructorId))
             throw new ForeignKeyConstraintViolationException("instructorId", instructorId);
     }
     //endregion

@@ -3,6 +3,7 @@ package dev.patika.schoolmanagementsystem.business.abstracts;
 import dev.patika.schoolmanagementsystem.entities.concretes.Student;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentService {
 
@@ -16,7 +17,7 @@ public interface StudentService {
      */
     List<Student> findAll(String name);
 
-    Student findById(Long id);
+    Optional<Student> findById(Long id);
 
     Student create(Student student);
 

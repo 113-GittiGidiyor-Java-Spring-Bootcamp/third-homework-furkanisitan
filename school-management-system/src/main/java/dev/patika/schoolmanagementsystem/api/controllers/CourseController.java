@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.on;
 
@@ -37,13 +38,11 @@ public class CourseController {
     @GetMapping("/{id}")
     public ResponseEntity<DataResult<Course>> getById(@PathVariable long id) {
 
-        Course course = courseService.findById(id);
+        Optional<Course> course = courseService.findById(id);
 
-        return course != null ?
-                ResponseEntity.ok(DataResultHelper.ok(course)) :
-
+        return course.map(value -> ResponseEntity.ok(DataResultHelper.ok(value)))
                 // return 404 if course does not exist
-                DataResultResponseHelper.notFound(Student.class.getSimpleName(), Pair.of("id", id));
+                .orElseGet(() -> DataResultResponseHelper.notFound(Student.class.getSimpleName(), Pair.of("id", id)));
     }
 
     @PostMapping

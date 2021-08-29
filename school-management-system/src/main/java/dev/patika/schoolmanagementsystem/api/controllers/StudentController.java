@@ -1,7 +1,6 @@
 package dev.patika.schoolmanagementsystem.api.controllers;
 
 import dev.patika.schoolmanagementsystem.api.helpers.DataResultResponseHelper;
-import dev.patika.schoolmanagementsystem.api.helpers.ResultResponseHelper;
 import dev.patika.schoolmanagementsystem.business.abstracts.StudentService;
 import dev.patika.schoolmanagementsystem.core.results.abstracts.DataResult;
 import dev.patika.schoolmanagementsystem.core.results.abstracts.Result;
@@ -15,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.on;
 
@@ -37,13 +37,11 @@ public class StudentController {
     @GetMapping("/{id}")
     public ResponseEntity<DataResult<Student>> getById(@PathVariable long id) {
 
-        Student student = studentService.findById(id);
+        Optional<Student> student = studentService.findById(id);
 
-        return student != null ?
-                ResponseEntity.ok(DataResultHelper.ok(student)) :
-
+        return student.map(value -> ResponseEntity.ok(DataResultHelper.ok(value)))
                 // return 404 if student does not exist
-                DataResultResponseHelper.notFound(Student.class.getSimpleName(), Pair.of("id", id));
+                .orElseGet(() -> DataResultResponseHelper.notFound(Student.class.getSimpleName(), Pair.of("id", id)));
     }
 
     @PostMapping
@@ -62,12 +60,6 @@ public class StudentController {
     @PutMapping("/{id}")
     public ResponseEntity<Result> update(@PathVariable long id, @RequestBody Student student) {
 
-        Student existStudent = studentService.findById(id);
-
-        // return 404 if student does not exist
-        if (existStudent == null)
-            return ResultResponseHelper.notFound(Student.class.getSimpleName(), Pair.of("id", id));
-
         student.setId(id);
         studentService.update(student);
 
@@ -77,14 +69,7 @@ public class StudentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Result> deleteById(@PathVariable long id) {
 
-        Student existStudent = studentService.findById(id);
-
-        // return 404 if student does not exist
-        if (existStudent == null)
-            return ResultResponseHelper.notFound(Student.class.getSimpleName(), Pair.of("id", id));
-
         studentService.deleteById(id);
-
         return ResponseEntity.noContent().build();
     }
 

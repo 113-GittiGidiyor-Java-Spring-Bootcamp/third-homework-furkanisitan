@@ -1,7 +1,6 @@
 package dev.patika.schoolmanagementsystem.api.controllers;
 
 import dev.patika.schoolmanagementsystem.api.helpers.DataResultResponseHelper;
-import dev.patika.schoolmanagementsystem.api.helpers.ResultResponseHelper;
 import dev.patika.schoolmanagementsystem.business.abstracts.InstructorService;
 import dev.patika.schoolmanagementsystem.core.results.abstracts.DataResult;
 import dev.patika.schoolmanagementsystem.core.results.abstracts.Result;
@@ -15,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.on;
 
@@ -37,13 +37,11 @@ public class InstructorController {
     @GetMapping("/{id}")
     public ResponseEntity<DataResult<Instructor>> getById(@PathVariable long id) {
 
-        Instructor instructor = instructorService.findById(id);
+        Optional<Instructor> instructor = instructorService.findById(id);
 
-        return instructor != null ?
-                ResponseEntity.ok(DataResultHelper.ok(instructor)) :
-
-                // return 404 if instructor does not exist
-                DataResultResponseHelper.notFound(Instructor.class.getSimpleName(), Pair.of("id", id));
+        return instructor.map(value -> ResponseEntity.ok(DataResultHelper.ok(value)))
+                // return 404 if instructor is not exist
+                .orElseGet(() -> DataResultResponseHelper.notFound(Instructor.class.getSimpleName(), Pair.of("id", id)));
     }
 
     @PostMapping
@@ -67,14 +65,7 @@ public class InstructorController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Result> deleteById(@PathVariable long id) {
 
-        Instructor existsInstructor = instructorService.findById(id);
-
-        // return 404 if instructor does not exist
-        if (existsInstructor == null)
-            return ResultResponseHelper.notFound(Instructor.class.getSimpleName(), Pair.of("id", id));
-
         instructorService.deleteById(id);
-
         return ResponseEntity.noContent().build();
     }
 

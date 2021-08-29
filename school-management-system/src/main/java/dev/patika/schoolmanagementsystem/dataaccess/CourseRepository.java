@@ -2,17 +2,22 @@ package dev.patika.schoolmanagementsystem.dataaccess;
 
 
 import dev.patika.schoolmanagementsystem.entities.concretes.Course;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface CourseRepository extends CrudRepository<Course, Long> {
+public interface CourseRepository extends JpaRepository<Course, Long> {
 
     List<Course> findAllByName(String name);
 
     List<Course> findAllByNameContains(String name);
 
-    Course findByCode(String code);
+    Optional<Course> findByCode(String code);
+
+    Course getByCode(String code);
+
+    boolean existsByCode(String code);
 }

@@ -3,6 +3,7 @@ package dev.patika.schoolmanagementsystem.business.abstracts;
 import dev.patika.schoolmanagementsystem.entities.concretes.Course;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CourseService {
 
@@ -16,9 +17,7 @@ public interface CourseService {
      */
     List<Course> findAll(String name);
 
-    Course findById(Long id);
-
-    Course findByCode(String code);
+    Optional<Course> findById(Long id);
 
     Course create(Course course);
 
