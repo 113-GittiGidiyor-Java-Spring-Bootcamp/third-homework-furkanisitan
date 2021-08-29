@@ -41,15 +41,13 @@ public class InstructorManager implements InstructorService {
         return repository.findById(id);
     }
 
-    @Override
-    public Optional<Instructor> findByPhoneNumber(String phoneNumber) {
-        return repository.findByPhoneNumber(phoneNumber);
-    }
-
     @Transactional
     @Override
     public Instructor create(Instructor instructor) {
+
+        // Check if 'phoneNumber' is unique
         validatePhoneNumberIsUnique(instructor.getPhoneNumber());
+
         return repository.save(instructor);
     }
 
@@ -59,15 +57,16 @@ public class InstructorManager implements InstructorService {
 
         Instructor existsInstructor = findById(instructor.getId()).orElse(null);
 
-        // Check if the Instructor is exists
+        // Check if the instructor is exists
         if (existsInstructor == null)
             throw new EntityNotExistsException("Instructor", Pair.of("id", instructor.getId()));
 
-        // check if existing entity type equals type of entity to update.
+        // Check if existing entity type equals type of entity to update.
         if (!instructor.getClass().equals(existsInstructor.getClass()))
             throw new InvalidEntityTypeException(existsInstructor.getClass().getSimpleName());
 
-        validatePhoneNumberIsUniqueForUpdate(instructor.getPhoneNumber(), instructor.getId());
+        // Check if 'phoneNumber' is unique for update
+        validatePhoneNumberIsUnique(instructor.getPhoneNumber(), instructor.getId());
 
         repository.save(instructor);
     }
@@ -77,7 +76,7 @@ public class InstructorManager implements InstructorService {
     public void deleteById(Long id) {
 
         Instructor instructor = findById(id)
-                // Check if the Instructor is exists
+                // Check if the instructor is exists
                 .orElseThrow(() -> new EntityNotExistsException("Instructor", Pair.of("id", id)));
 
         instructor.clearCourses();
@@ -110,23 +109,24 @@ public class InstructorManager implements InstructorService {
      * @throws UniqueConstraintViolationException if {@literal phoneNumber} is not unique.
      */
     private void validatePhoneNumberIsUnique(String phoneNumber) {
+
         if (repository.existsByPhoneNumber(phoneNumber))
             throw new UniqueConstraintViolationException("phoneNumber", phoneNumber);
     }
 
     /**
-     * Checks if {@literal phoneNumber} is unique for update_ operation.
+     * Checks if {@literal phoneNumber} is unique for update operation.
      *
-     * @param phoneNumber  unique value to validate.
-     * @param instructorId the id of the instructor to be updated.
-     * @throws UniqueConstraintViolationException if {@literal phoneNumber} is not unique.
+     * @param phoneNumber unique value to validate.
+     * @param id          primary key of the instructor to be updated.
+     * @throws UniqueConstraintViolationException if {@literal phoneNumber} is not unique for update.
      */
-    private void validatePhoneNumberIsUniqueForUpdate(String phoneNumber, Long instructorId) {
+    private void validatePhoneNumberIsUnique(String phoneNumber, Long id) {
 
         // get proxy object
         Instructor existsInstructor = repository.getByPhoneNumber(phoneNumber);
 
-        if (existsInstructor != null && !Objects.equals(existsInstructor.getId(), instructorId))
+        if (existsInstructor != null && !Objects.equals(existsInstructor.getId(), id))
             throw new UniqueConstraintViolationException("phoneNumber", phoneNumber);
     }
     //endregion

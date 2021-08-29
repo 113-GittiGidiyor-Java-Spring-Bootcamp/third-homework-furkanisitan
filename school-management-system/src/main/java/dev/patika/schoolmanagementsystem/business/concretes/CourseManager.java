@@ -52,7 +52,7 @@ public class CourseManager implements CourseService {
         validateCodeIsUnique(course.getCode());
 
         // Check if there is an instructor with the foreign key 'instructorId'
-        validateInstructorIsExists(course.getInstructor().getId());
+        validateInstructorIsExistsById(course.getInstructor().getId());
 
         return repository.save(course);
     }
@@ -65,11 +65,11 @@ public class CourseManager implements CourseService {
         if (!repository.existsById(course.getId()))
             throw new EntityNotExistsException("Course", Pair.of("id", course.getId()));
 
-        // Check if 'code' is unique
-        validateCodeIsUniqueForUpdate(course.getCode(), course.getId());
+        // Check if 'code' is unique for update
+        validateCodeIsUnique(course.getCode(), course.getId());
 
         // Check if there is an instructor with the foreign key 'instructorId'
-        validateInstructorIsExists(course.getInstructor().getId());
+        validateInstructorIsExistsById(course.getInstructor().getId());
 
         repository.save(course);
     }
@@ -107,6 +107,7 @@ public class CourseManager implements CourseService {
      * @throws UniqueConstraintViolationException if {@literal code} is not unique.
      */
     private void validateCodeIsUnique(String code) {
+
         if (repository.existsByCode(code))
             throw new UniqueConstraintViolationException("code", code);
     }
@@ -114,16 +115,16 @@ public class CourseManager implements CourseService {
     /**
      * Checks if {@literal code} is unique for update operation.
      *
-     * @param code     unique value to validate.
-     * @param courseId the id of the course to be updated.
-     * @throws UniqueConstraintViolationException if {@literal code} is not unique.
+     * @param code unique value to validate.
+     * @param id   primary key of the course to be updated.
+     * @throws UniqueConstraintViolationException if {@literal code} is not unique for update.
      */
-    private void validateCodeIsUniqueForUpdate(String code, Long courseId) {
+    private void validateCodeIsUnique(String code, Long id) {
 
         // get proxy object
         Course course = repository.getByCode(code);
 
-        if (course != null && !Objects.equals(course.getId(), courseId))
+        if (course != null && !Objects.equals(course.getId(), id))
             throw new UniqueConstraintViolationException("code", code);
     }
 
@@ -133,7 +134,8 @@ public class CourseManager implements CourseService {
      * @param instructorId foreign key
      * @throws ForeignKeyConstraintViolationException if @{literal instructorId} is not exists.
      */
-    private void validateInstructorIsExists(Long instructorId) {
+    private void validateInstructorIsExistsById(Long instructorId) {
+
         if (!instructorService.existsById(instructorId))
             throw new ForeignKeyConstraintViolationException("instructorId", instructorId);
     }

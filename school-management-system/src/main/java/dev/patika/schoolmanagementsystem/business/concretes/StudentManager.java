@@ -49,7 +49,7 @@ public class StudentManager implements StudentService {
     public void update(Student student) {
 
         // Check if the student is exists
-        validateStudentIsExistsById(student.getId());
+        validateExistsById(student.getId());
 
         repository.save(student);
     }
@@ -59,7 +59,7 @@ public class StudentManager implements StudentService {
     public void deleteById(Long id) {
 
         // Check if the student is exists
-        validateStudentIsExistsById(id);
+        validateExistsById(id);
 
         repository.deleteById(id);
     }
@@ -70,16 +70,15 @@ public class StudentManager implements StudentService {
         repository.deleteAllByName(name);
     }
 
-
     //region validators
 
     /**
      * Checks if there is a student with the given {@literal id}.
      *
-     * @param id student's primary key.
-     * @throws EntityNotExistsException if student is not exists by {@literal id}.
+     * @param id primary key of the entity.
+     * @throws EntityNotExistsException if entity is not exists by {@literal id}.
      */
-    private void validateStudentIsExistsById(Long id) {
+    private void validateExistsById(Long id) {
 
         if (!repository.existsById(id))
             throw new EntityNotExistsException("Student", Pair.of("id", id));

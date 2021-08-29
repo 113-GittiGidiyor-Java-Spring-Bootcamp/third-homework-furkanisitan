@@ -19,8 +19,6 @@ public interface InstructorService {
 
     Optional<Instructor> findById(Long id);
 
-    Optional<Instructor> findByPhoneNumber(String phoneNumber);
-
     Instructor create(Instructor instructor);
 
     void update(Instructor instructor);
