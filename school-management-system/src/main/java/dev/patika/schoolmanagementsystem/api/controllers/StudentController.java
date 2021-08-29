@@ -6,6 +6,7 @@ import dev.patika.schoolmanagementsystem.core.results.abstracts.DataResult;
 import dev.patika.schoolmanagementsystem.core.results.abstracts.Result;
 import dev.patika.schoolmanagementsystem.core.results.helpers.DataResultHelper;
 import dev.patika.schoolmanagementsystem.entities.concretes.Student;
+import dev.patika.schoolmanagementsystem.entities.dtos.student.GenderCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,11 @@ public class StudentController {
     @GetMapping
     public ResponseEntity<DataResult<List<Student>>> getAll(@RequestParam(required = false) String name) {
         return ResponseEntity.ok(DataResultHelper.ok(studentService.findAllByNameContains(name)));
+    }
+
+    @GetMapping("/genders")
+    public ResponseEntity<DataResult<List<GenderCount>>> getAllGenders() {
+        return ResponseEntity.ok(DataResultHelper.ok(studentService.findGenderCounts()));
     }
 
     @GetMapping("/{id}")

@@ -4,6 +4,7 @@ import dev.patika.schoolmanagementsystem.business.abstracts.StudentService;
 import dev.patika.schoolmanagementsystem.core.exceptions.EntityNotExistsException;
 import dev.patika.schoolmanagementsystem.dataaccess.StudentRepository;
 import dev.patika.schoolmanagementsystem.entities.concretes.Student;
+import dev.patika.schoolmanagementsystem.entities.dtos.student.GenderCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,11 @@ public class StudentManager implements StudentService {
     @Override
     public List<Student> findAllByNameContains(String name) {
         return name != null && !name.isEmpty() ? repository.findAllByNameContainsIgnoreCase(name) : findAll();
+    }
+
+    @Override
+    public List<GenderCount> findGenderCounts() {
+        return repository.countTotalStudentsByGender();
     }
 
     @Override
