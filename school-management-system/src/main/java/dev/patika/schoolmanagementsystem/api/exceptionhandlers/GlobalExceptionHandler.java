@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -52,4 +53,10 @@ class GlobalExceptionHandler {
         return ResultHelper.fail(ResponseMessage.INVALID_ENTITY_TYPE, e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpClientErrorException.class)
+    @ResponseBody
+    Result handleHttpClientErrorException(HttpClientErrorException e) {
+        return ResultHelper.fail("HttpClientErrorException", e.getMessage());
+    }
 }
