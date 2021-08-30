@@ -33,8 +33,14 @@ public class DataLoader implements CommandLineRunner {
 
         //region instructors
         Instructor pi1 = getPermanentInstructor("PI1", "+905055557555", "PI1Address", BigDecimal.valueOf(10123.78));
+        Instructor pi2 = getPermanentInstructor("PI2", "+905055557554", "PI2Address", BigDecimal.valueOf(5643.77));
+        Instructor pi3 = getPermanentInstructor("PI3", "+905055557553", "PI3Address", BigDecimal.valueOf(15689.06));
+        Instructor pi4 = getPermanentInstructor("PI4", "+905055557552", "PI4Address", BigDecimal.valueOf(3428.99));
         Instructor vr1 = getVisitingResearcher("VR1", "+905055557556", "VR1Address", BigDecimal.valueOf(75.53));
-        instructorRepository.saveAll(Stream.of(pi1, vr1).collect(Collectors.toList()));
+        Instructor vr2 = getVisitingResearcher("VR2", "+905055557557", "VR2Address", BigDecimal.valueOf(44.86));
+        Instructor vr3 = getVisitingResearcher("VR3", "+905055557558", "VR3Address", BigDecimal.valueOf(147.99));
+        Instructor vr4 = getVisitingResearcher("VR4", "+905055557559", "VR4Address", BigDecimal.valueOf(66.77));
+        instructorRepository.saveAll(Stream.of(pi1, pi2, pi3, pi4, vr1, vr2, vr3, vr4).collect(Collectors.toList()));
         //endregion
 
         //region courses
